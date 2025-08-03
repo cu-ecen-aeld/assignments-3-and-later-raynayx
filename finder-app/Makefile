@@ -1,4 +1,4 @@
-
+#optional compiler selection
 CC := $(CROSS_COMPILE)gcc
 CROSS_COMPILE ?=
 
