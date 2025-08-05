@@ -51,7 +51,7 @@ fi
 echo "Removing the old writer utility and compiling as a native application"
 rm -rf "${WRITEDIR}"
 
-make
+# make
 mkdir "$WRITEDIR"
 for i in $( seq 1 $NUMFILES)
 do

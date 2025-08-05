@@ -8,7 +8,7 @@ all: writer
 
 fileList := $(wildcard *.c)
 writer: $(fileList)
-	$(CC) $(fileList) -o writer
+	$(CC) $(CFLAGS) $(fileList) -o writer
 
 
 clean:
