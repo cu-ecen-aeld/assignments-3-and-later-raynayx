@@ -135,28 +135,35 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 
     pid_t pid = fork();
 
-    if (pid < 0) {
-        perror("fork failed");
-        return false;
+    switch (pid)
+    {
+        case -1:
+            perror("Fork Error");
+            return false;
+
+        case 0:
+            int fd = open(outputfile,O_WRONLY|O_CREAT|O_TRUNC,0644);
+            if (dup2(fd,1) < 0)
+            {
+                close(fd);
+                return false;
+            }
+            execv(command[0],command);
+            _exit(EXIT_FAILURE);
+            break;
+    
+        default:
+            int status;
+            int ret = waitpid(pid, &status,0);
+
+            if(ret == -1)
+            {
+                perror("waitpid failed");
+                return false;
+            }
+            return WIFEXITED(status) && WEXITSTATUS(status) == 0;
     }
 
-    if( pid == 0 ) {
-        int fd = open(outputfile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-        if ( dup2(fd, 1) < 0 ) { 
-            close(fd);
-            return false;
-        }
-        execv(command[0], command);
-         _exit(EXIT_FAILURE);
-    } else {
-        int status;
-        if (waitpid(pid, &status, 0) == -1) {
-            perror("waitpid failed");
-            return false;
-        }
-
-        return WIFEXITED(status) && WEXITSTATUS(status) == 0;
-    }
 
     return true;
 }
