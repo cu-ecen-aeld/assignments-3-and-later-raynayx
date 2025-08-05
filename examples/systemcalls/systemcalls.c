@@ -72,35 +72,31 @@ bool do_exec(int count, ...)
 */
 
     pid_t pid = fork();
-    int status;
-
-
-    if(pid == -1)
-    {
-        perror("Fork Error");
-        return false;
-    }
-    else if(pid == 0)
-    {
-        execv(command[0],command);
-        perror("Execv Error");
-        exit(EXIT_FAILURE);
     
-    }
-    else if(pid > 0)
+
+    switch (pid)
     {
-        if(waitpid(pid,&status,0) == -1)
-        {
-            perror("Waitpid Error");
+        case -1:                               //error case
+            perror("Fork Error");
             return false;
-        }
-        else if(WIFEXITED (status))
-        {
-            return WEXITSTATUS (status) == 0;
-        }
+        case 0:                             //child process
+            execv(command[0],command);
+            perror("Execv Error");
+            exit(EXIT_FAILURE);
+            break;
+        default:                            //parent process
+            int status;
+            if(waitpid(pid,&status,0) == -1)
+            {
+                perror("Waitpid Error");
+                return false;
+            }
+            else if(WIFEXITED (status))
+            {
+                return WEXITSTATUS (status) == 0;
+            }
     }
-    
-    
+      
     
     return true;
 }
