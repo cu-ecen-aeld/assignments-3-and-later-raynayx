@@ -133,13 +133,27 @@ make CROSS_COMPILE=${CROSS_COMPILE}
 # TODO: Copy the finder related scripts and executables to the /home directory
 # on the target rootfs
 cp writer ${OUTDIR}/rootfs/home/
-cp finder.sh ${OUTDIR}/rootfs/home
-cp finder-test.sh ${OUTDIR}/rootfs/home/
-cp autorun-qemu.sh ${OUTDIR}/rootfs/home/
+
+# 8) Copy the finder related scripts and executables to the /home directory
+echo "Copying finder scripts, conf files and autorun script"
+mkdir -p "${OUTDIR}/rootfs/home/conf"
+
+# Copy scripts
+cp ${FINDER_APP_DIR}/finder.sh ${OUTDIR}/rootfs/home/
+cp ${FINDER_APP_DIR}/finder-test.sh ${OUTDIR}/rootfs/home/
+cp ${FINDER_APP_DIR}/autorun-qemu.sh ${OUTDIR}/rootfs/home/
+
+# Copy conf files
+cp ${FINDER_APP_DIR}/../conf/username.txt ${OUTDIR}/rootfs/home/conf/
+cp ${FINDER_APP_DIR}/../conf/assignment.txt ${OUTDIR}/rootfs/home/conf/
+
+# Modify finder-test.sh to reference conf/assignment.txt instead of ../conf/assignment.txt
+sed -i 's|../conf/assignment.txt|conf/assignment.txt|g' ${OUTDIR}/rootfs/home/finder-test.sh
 
 # mkdir -p "${OUTDIR}/rootfs/home/conf"
-cp -r conf/ ${OUTDIR}/rootfs/home
-
+# cp -r conf/ ${OUTDIR}/rootfs/home
+cp ${FINDER_APP_DIR}/../conf/username.txt ${OUTDIR}/rootfs/home/conf/
+cp ${FINDER_APP_DIR}/../conf/assignment.txt ${OUTDIR}/rootfs/home/conf/
 
 # TODO: Chown the root directory
 cd ${OUTDIR}
