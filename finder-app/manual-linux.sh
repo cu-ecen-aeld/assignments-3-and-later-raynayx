@@ -7,7 +7,7 @@ set -u
 
 OUTDIR=/tmp/aeld
 # KERNEL_REPO=git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-# KERNEL_REPO=file:///home/rene/Desktop/linux-stable
+KERNEL_REPO=file:///home/rene/Desktop/linux-stable
 KERNEL_VERSION=v5.15.163
 BUSYBOX_VERSION=1_33_1
 FINDER_APP_DIR=$(realpath $(dirname $0))
@@ -26,28 +26,30 @@ mkdir -p ${OUTDIR}
 
 cd "$OUTDIR"
 
-ls
 echo "$(pwd)"
-# if [ ! -d "${OUTDIR}/linux-stable" ]; then
-#     #Clone only if the repository does not exist.
-# 	echo "CLONING GIT LINUX STABLE VERSION ${KERNEL_VERSION} IN ${OUTDIR}"
-# 	git clone "${KERNEL_REPO}" #--depth 1 --single-branch --branch ${KERNEL_VERSION}
-# fi
 
-# if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
-#     cd linux-stable
-#     echo "Checking out version ${KERNEL_VERSION}"
-#     git checkout ${KERNEL_VERSION}
+if [ ! -d "${OUTDIR}/linux-stable" ]; then
+    #Clone only if the repository does not exist.
+	echo "CLONING GIT LINUX STABLE VERSION ${KERNEL_VERSION} IN ${OUTDIR}"
+	git clone "${KERNEL_REPO}" #--depth 1 --single-branch --branch ${KERNEL_VERSION}
+    echo "RAYX:: $(ls .)"
+fi
 
-#     # TODO: Add your kernel build steps here
-#     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} mrproper
-#     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} defconfig
-#     make -j8 ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} all
-#     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} modules
-#     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} dtbs
-# fi
+if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
+    cd linux-stable
+    echo "Checking out version ${KERNEL_VERSION}"
+    git checkout ${KERNEL_VERSION}
+
+    # TODO: Add your kernel build steps here
+    make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} mrproper
+    make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} defconfig
+    make -j8 ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} all
+    make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} modules
+    make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} dtbs
+fi
 
 echo "Adding the Image in outdir"
+
 
 cp ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ${OUTDIR}/
 
@@ -166,6 +168,7 @@ sudo chown -R root:root rootfs
 
 # clear
 # TODO: Create initramfs.cpio.gz
+# exit 0
 cd $OUTDIR/rootfs
 find . | cpio -H newc -ov --owner root:root | gzip > ${OUTDIR}/initramfs.cpio.gz
 # gzip -f ${OUTDIR}/initramfs.cpio
