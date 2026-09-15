@@ -33,18 +33,19 @@ echo $(ls .)
 # 	echo "CLONING GIT LINUX STABLE VERSION ${KERNEL_VERSION} IN ${OUTDIR}"
 # 	git clone "${KERNEL_REPO}" #--depth 1 --single-branch --branch ${KERNEL_VERSION}
 # fi
-if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
-    cd linux-stable
-    echo "Checking out version ${KERNEL_VERSION}"
-    git checkout ${KERNEL_VERSION}
 
-    # TODO: Add your kernel build steps here
-    make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} mrproper
-    make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} defconfig
-    make -j8 ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} all
-    make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} modules
-    make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} dtbs
-fi
+# if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
+#     cd linux-stable
+#     echo "Checking out version ${KERNEL_VERSION}"
+#     git checkout ${KERNEL_VERSION}
+
+#     # TODO: Add your kernel build steps here
+#     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} mrproper
+#     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} defconfig
+#     make -j8 ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} all
+#     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} modules
+#     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} dtbs
+# fi
 
 echo "Adding the Image in outdir"
 
