@@ -27,7 +27,7 @@ mkdir -p ${OUTDIR}
 cd "$OUTDIR"
 
 ls
-echo "from lx:: $(ls )"
+echo "from lx:: $(ls .)"
 # if [ ! -d "${OUTDIR}/linux-stable" ]; then
 #     #Clone only if the repository does not exist.
 # 	echo "CLONING GIT LINUX STABLE VERSION ${KERNEL_VERSION} IN ${OUTDIR}"
